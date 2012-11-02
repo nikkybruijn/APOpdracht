@@ -1,7 +1,6 @@
-
-
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,14 +15,43 @@ import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+/**
+ * 効果音に使う程度なら楽に再生できるクラス<br>
+ * 再生できるファイルはwavだけ。<br>
+ * <br>
+ * 使い方：<br>
+ * ・再生したい<br>
+ * SEManager.play(ファイルパス);<br>
+ * 以上。これだけ。<br>
+ * もうしばらくその効果音を使わないならば<br>
+ * SEManager.dipose(ファイルパス);<br>
+ * 予めロードしておきたい時は<br>
+ * SEManager.load(ファイルパス);<br>
+ * おわり。<br>
+ * <br>
+ * 詳しい内部処理<br>
+ * play実行時、ロードされてない効果音は自動的にロードしてから再生する<br>
+ * 勝手にdiposeしないため、開放しないとどんどんメモリ食う。使わなくなったらdipose。これ約束<br>
+ * FileInputStreamを使ってファイルを開いているため、jarファイル内とかの場所からはロードできない<br>
+ * AudioInputStream stream = AudioSystem.getAudioInputStream(new FileInputStream(filePath));<br>
+ * この行のFileInputStreamをBufferedInputStreamとかに変えれば良い。<br>
+ * @author pitto,ネットからのソースにちょい手を入れたもの
+ */
 public class SEManager implements LineListener{
 	private static SEManager me=new SEManager();
-//	private static HashMap<String,Pair<AudioFormat,Pair<Byte[],Integer>>> seData=new HashMap<String,Pair<AudioFormat,Pair<Byte[],Integer>>>();
 	private static HashMap<File,Clip> seData=new HashMap<File,Clip>();
 	private static ArrayList<Clip> taskList=new ArrayList<Clip>();
 	private SEManager(){
 
 	}
+	/**
+	 * 指定したファイルをロードする
+	 * @param filePath 再生したいファイルのファイルパス
+	 * @return 再生するためのデータ<br>
+	 * SEManager内で管理しているので特別に必要がなければ受け取る必要はない<br>
+	 * 既にロードしているファイルを指定しても既にロードしてあるデータのインスタンスを返すだけ<br>
+	 * 失敗したらnullを返す
+	 */
 	public static Clip load(File filePath){
 		if(seData.containsKey(filePath)){
 			return seData.get(filePath);
@@ -34,13 +62,15 @@ public class SEManager implements LineListener{
 		}
 		return c;
 	}
+	/**
+	 * ファイルパスから再生インスタンスを生成する
+	 * @param filePath
+	 * @return 再生インスタンス
+	 */
 	private static Clip create(File filePath){
 		try {
-		//	AbstractFileLoad f=AbstractFileLoad.create(filePath);
-
 			// オーディオストリームを開く
-            AudioInputStream stream = AudioSystem
-                    .getAudioInputStream(new FileInputStream(filePath));
+            AudioInputStream stream = AudioSystem.getAudioInputStream(new FileInputStream(filePath));
 
             // オーディオ形式を取得
             AudioFormat format = stream.getFormat();
@@ -80,10 +110,19 @@ public class SEManager implements LineListener{
 		}
 		return null;
 	}
-	public static void play(File filePath){
+	/**
+	 * 指定されたファイルを再生する<br>
+	 * ロードされてない場合はロードしてから再生する<br>
+	 * @param filePath ファイルパス
+	 * @throws FileNotFoundException 指定されたファイルが無かった場合
+	 */
+	public static void play(File filePath) throws FileNotFoundException{
 		Clip se=seData.get(filePath);
 		if(se==null){
 			se=load(filePath);
+		}
+		if(se==null){
+			throw new FileNotFoundException();
 		}
 		if(se.getLongFramePosition()==0){
 			se.start();
@@ -93,6 +132,11 @@ public class SEManager implements LineListener{
 			se.start();
 		}
 	}
+	/**
+	 * 指定されたファイルパスのサウンドインスタンスメモリデータを解放する
+	 * 指定したファイルパスが存在しなかったり、ロードしていなかった場合は何もしない
+	 * @param filePath ファイルパス
+	 */
 	public static void dispose(File filePath){
 		seData.remove(filePath);
 	}
