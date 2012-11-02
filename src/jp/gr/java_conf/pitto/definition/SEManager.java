@@ -1,4 +1,4 @@
-package jp.gr.java_conf.pitto;
+package jp.gr.java_conf.pitto.definition;
 
 import java.io.File;
 import java.io.FileInputStream;
