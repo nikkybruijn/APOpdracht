@@ -1,5 +1,6 @@
 package jp.gr.java_conf.pitto.definition;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,8 +36,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * play実行時、ロードされてない効果音は自動的にロードしてから再生する<br>
  * 勝手にdiposeしないため、開放しないとどんどんメモリ食う。使わなくなったらdipose。これ約束<br>
  * FileInputStreamを使ってファイルを開いているため、jarファイル内とかの場所からはロードできない<br>
- * AudioInputStream stream = AudioSystem.getAudioInputStream(new FileInputStream(filePath));<br>
- * この行のFileInputStreamをBufferedInputStreamとかに変えれば良い。<br>
+ * AudioInputStream stream = AudioSystem.getAudioInputStream(filePath);<br>
+ * この行の引数をInputStreamインタフェースのものに変えたりすればjarファイル内のファイルにアクセスできる
  * @author pitto,ネットからのソースにちょい手を入れたもの
  */
 public class SEManager implements LineListener{
@@ -72,7 +73,7 @@ public class SEManager implements LineListener{
 	private static Clip create(File filePath){
 		try {
 			// オーディオストリームを開く
-            AudioInputStream stream = AudioSystem.getAudioInputStream(new FileInputStream(filePath));
+            AudioInputStream stream = AudioSystem.getAudioInputStream(filePath);
 
             // オーディオ形式を取得
             AudioFormat format = stream.getFormat();
