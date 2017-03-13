@@ -79,7 +79,7 @@ public class SEManager implements LineListener {
 
         if (!AudioSystem.isLineSupported(info)) {
             System.out.println("エラー: " + audioFilePath + "はサポートされていない形式です");
-            System.exit(0);
+            throw new UnsupportedAudioFileException();
         }
 
         Clip clip = (Clip) AudioSystem.getLine(info);
