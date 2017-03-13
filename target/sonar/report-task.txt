@@ -1,0 +1,6 @@
+organization=realnewave-github
+projectKey=groupId:APOpdracht
+serverUrl=https://sonarqube.com
+dashboardUrl=https://sonarqube.com/dashboard/index/groupId:APOpdracht
+ceTaskId=AVrH0-FyfTr1EKzCBh5l
+ceTaskUrl=https://sonarqube.com/api/ce/task?id=AVrH0-FyfTr1EKzCBh5l
