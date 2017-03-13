@@ -78,7 +78,7 @@ public class SEManager implements LineListener {
         DataLine.Info info = new DataLine.Info(Clip.class, format);
 
         if (!AudioSystem.isLineSupported(info)) {
-            System.out.println("ã‚¨ãƒ©ãƒ¼: " + audioFilePath + "ã�¯ã‚µãƒ�ãƒ¼ãƒˆã�•ã‚Œã�¦ã�„ã�ªã�„å½¢å¼�ã�§ã�™");
+        	System.out.println("エラー: " + audioFilePath + "はサポートされていない形式です");
             throw new UnsupportedAudioFileException();
         }
 
