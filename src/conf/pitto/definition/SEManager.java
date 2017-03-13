@@ -1,11 +1,12 @@
-package jp.gr.java_conf.pitto.definition;
-
+package conf.pitto.definition;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -17,9 +18,9 @@ import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+
 public class SEManager implements LineListener {
-
-
+	private static final Logger LOGGER = Logger.getLogger(SEManager.class.getName());
     private static SEManager me = new SEManager();
     private static HashMap<File, Clip> seData = new HashMap<>();
     private static ArrayList<Clip> taskList = new ArrayList<>();
@@ -42,10 +43,9 @@ public class SEManager implements LineListener {
 
     private static Clip createSoundFile(File audioFilePath) {
         try {
-
             return getClip(audioFilePath);
         } catch (UnsupportedAudioFileException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Unsupported audio file", e);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (LineUnavailableException e) {
@@ -78,7 +78,7 @@ public class SEManager implements LineListener {
         DataLine.Info info = new DataLine.Info(Clip.class, format);
 
         if (!AudioSystem.isLineSupported(info)) {
-            System.out.println("エラー: " + audioFilePath + "はサポートされていない形式です");
+            System.out.println("ã‚¨ãƒ©ãƒ¼: " + audioFilePath + "ã�¯ã‚µãƒ�ãƒ¼ãƒˆã�•ã‚Œã�¦ã�„ã�ªã�„å½¢å¼�ã�§ã�™");
             throw new UnsupportedAudioFileException();
         }
 
