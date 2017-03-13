@@ -85,6 +85,7 @@ public class SEManager implements LineListener {
         Clip clip = (Clip) AudioSystem.getLine(info);
         clip.addLineListener(me);
         clip.open(stream);
+        stream.close();
         return clip;
     }
 
